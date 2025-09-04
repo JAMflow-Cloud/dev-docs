@@ -6,12 +6,18 @@
 
 - [Your Site Name](https://jamflow-docs.nuxt.space//llms-full.txt): A brief description of your site
 
+## LandingEn
+
+- [Root page](https://jamflow-docs.nuxt.space/en): Find the documentation for JAMflow modules in Italian or English
+
 ## DocsEn
 
-- [JAMflow Documentazione](https://jamflow-docs.nuxt.space/en): Find the documentation for JAMflow modules in Italian or English
 - [Auth Module and Service](https://jamflow-docs.nuxt.space/en/auth): JAMflow Authentication and Autorization 
+
+## LandingIt
+
+- [Root page](https://jamflow-docs.nuxt.space/it): Trova la documentazione per i moduli JAMflow in italiano o inglese
 
 ## DocsIt
 
-- [JAMflow Documentazione](https://jamflow-docs.nuxt.space/it): Trova la documentazione per i modili JAMflow in italiano o inglese
 - [Auth Module and Service](https://jamflow-docs.nuxt.space/it/auth): JAMflow Authentication and Autorization 

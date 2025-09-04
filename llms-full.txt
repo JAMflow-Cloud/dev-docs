@@ -1,0 +1,26 @@
+# Root page
+
+Find the documentation for JAMflow modules in Italian or English
+
+
+# Auth Module and Service
+
+The Auth Module and Auth Service are services integrated with the JAMflow infrastructure for managing sessions and permissions using a solution inspired by Google Zanzibar.
+
+- JWS and JWE based
+- Auto Refresh of the session
+- Designing for a global, distributed, and stateless setup.
+
+
+# Root page
+
+Trova la documentazione per i moduli JAMflow in italiano o inglese
+
+
+# Auth Module and Service
+
+I Moduli di Auth Module e Auth Service sono servizi integrati con l'infrastruttura JAMflow per la gestione delle sessioni e dei permessi usando una soluzione ispirata da Google Zanzibar.
+
+- basato su JWS e JWE
+- Auto Refresh della sessione
+- Progettato per un'architettura globale, distribuita e stateless.
