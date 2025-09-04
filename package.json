@@ -1,16 +1,16 @@
 {
   "name": "docus-starter",
   "scripts": {
-    "build": "nuxt build --extends docus",
+    "build": "nuxt build",
     "clear": "nuxt cleanup",
-    "dev": "nuxt dev --extends docus",
-    "postinstall": "nuxt prepare --extends docus",
+    "dev": "nuxt dev",
+    "postinstall": "nuxt prepare",
     "preview": "nuxt preview"
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.0.6",
     "better-sqlite3": "^12.2.0",
-    "docus": "https://pkg.pr.new/docus@1170",
+    "docus": "^4.1.0",
     "nuxt": "^4.1.0"
   },
   "overrides": {

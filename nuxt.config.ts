@@ -1,5 +1,8 @@
 export default defineNuxtConfig({
   modules: ['@nuxtjs/i18n'],
+
+  extends: ['docus'],
+
   i18n: {
     defaultLocale: 'en',
     locales: [
@@ -7,6 +10,7 @@ export default defineNuxtConfig({
       { code: 'it', name: 'Italian' },
     ],
   },
+
   llms: {
     domain: 'https://jamflow-docs.nuxt.space/',
     title: 'Your Site Name',
