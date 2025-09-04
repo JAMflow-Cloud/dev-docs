@@ -1,9 +1,10 @@
 export default defineNuxtConfig({
-  extends: ['docus'],
+  extends: ['github:sandros94/docus/layer#ui-v4-alpha'],
 
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui-pro',
+    '@nuxt/ui',
+    '@nuxt/content',
     '@nuxtjs/i18n',
   ],
 
