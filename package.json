@@ -1,13 +1,17 @@
 {
   "name": "docus-starter",
   "scripts": {
+    "build": "nuxt build --extends docus",
+    "clear": "nuxt cleanup",
     "dev": "nuxt dev --extends docus",
-    "build": "nuxt build --extends docus"
+    "postinstall": "nuxt prepare --extends docus",
+    "preview": "nuxt preview"
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.0.6",
     "better-sqlite3": "^12.2.0",
-    "docus": "latest",
-    "nuxt": "^4.0.0"
-  }
+    "docus": "https://pkg.pr.new/docus@1171",
+    "nuxt": "^4.1.0"
+  },
+  "packageManager": "pnpm@10.15.1"
 }
