@@ -10,8 +10,12 @@
   "dependencies": {
     "@nuxtjs/i18n": "^10.0.6",
     "better-sqlite3": "^12.2.0",
-    "docus": "https://pkg.pr.new/docus@1171",
+    "docus": "https://pkg.pr.new/docus@1170",
     "nuxt": "^4.1.0"
+  },
+  "overrides": {
+    "@intlify/unplugin-vue-i18n": "11.0.0-beta.5",
+    "vite": "npm:rolldown-vite@latest"
   },
   "packageManager": "pnpm@10.15.1"
 }
