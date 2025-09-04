@@ -1,8 +1,10 @@
 ---
 links: []
-title: JAMflow Documentazione
 navigation:
   title: Home
+seo:
+  title: JAMflow Documentation
+  description: Documentation for JAMflow modules
 ---
 
 # Root page
