@@ -8,10 +8,17 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@nuxtjs/i18n": "^10.0.6",
     "better-sqlite3": "^12.2.0",
-    "docus": "^4.1.0",
-    "nuxt": "^4.1.0"
+    "docus": "^4.1.0"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.9.0",
+    "@nuxtjs/i18n": "^10.0.6",
+    "eslint": "^9.34.0",
+    "nuxt": "^4.1.0",
+    "typescript": "^5.9.2",
+    "vue-router": "^4.5.1",
+    "vue-tsc": "^3.0.6"
   },
   "overrides": {
     "@intlify/unplugin-vue-i18n": "11.0.0-beta.5",

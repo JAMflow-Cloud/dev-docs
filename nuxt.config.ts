@@ -1,7 +1,19 @@
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/i18n'],
-
   extends: ['docus'],
+
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/ui-pro',
+    '@nuxtjs/i18n',
+  ],
+
+  css: ['~/assets/css/main.css'],
+
+  eslint: {
+    config: {
+      stylistic: true,
+    },
+  },
 
   i18n: {
     defaultLocale: 'en',
