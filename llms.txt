@@ -1,0 +1,12 @@
+# Your Site Name
+
+> A brief description of your site
+
+## Documentation Sets
+
+- [Your Site Name](https://jamflow-docs.nuxt.space//llms-full.txt): A brief description of your site
+
+## DocsIt
+
+- [JAMflow Documentazione](https://jamflow-docs.nuxt.space/it): Trova la documentazione per i modili JAMflow in italiano o inglese
+- [Auth Module and Service](https://jamflow-docs.nuxt.space/it/auth): JAMflow Authentication and Autorization 
