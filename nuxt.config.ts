@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  extends: ['github:sandros94/docus/layer#ui-v4-alpha'],
+  extends: ['docus'],
 
   modules: [
     '@nuxt/eslint',
