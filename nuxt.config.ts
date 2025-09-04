@@ -7,7 +7,7 @@ export default defineNuxtConfig({
       { code: 'it', name: 'Italian' },
     ],
   },
-   llms: {
+  llms: {
     domain: 'https://jamflow-docs.nuxt.space/',
     title: 'Your Site Name',
     description: 'A brief description of your site',
