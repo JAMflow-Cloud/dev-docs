@@ -8,16 +8,16 @@
 
 ## LandingEn
 
-- [Root page](https://jamflow-docs.nuxt.space/en): Find the documentation for JAMflow modules in Italian or English
+- [JAMflow Documentation](https://jamflow-docs.nuxt.space/en): Documentation for JAMflow modules
 
 ## DocsEn
 
-- [Auth Module and Service](https://jamflow-docs.nuxt.space/en/auth): JAMflow Authentication and Autorization 
+- [Auth Module and Service](https://jamflow-docs.nuxt.space/en/auth/getting-started): JAMflow Authentication and Autorization 
 
 ## LandingIt
 
-- [Root page](https://jamflow-docs.nuxt.space/it): Trova la documentazione per i moduli JAMflow in italiano o inglese
+- [JAMflow Documentazione](https://jamflow-docs.nuxt.space/it): Documentazione per i moduli JAMflow
 
 ## DocsIt
 
-- [Auth Module and Service](https://jamflow-docs.nuxt.space/it/auth): JAMflow Authentication and Autorization 
+- [Auth Module and Service](https://jamflow-docs.nuxt.space/it/auth/getting-started): JAMflow Authentication and Autorization 

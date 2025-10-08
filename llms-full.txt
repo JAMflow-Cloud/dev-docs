@@ -1,26 +1,128 @@
-# Root page
+# JAMflow Documentation
 
-Find the documentation for JAMflow modules in Italian or English
+::u-page-hero
+#title
+JAMflow Docs
+
+#description
+Find the documentation for JAMflow modules in Italian and English
+::
+
+::u-page-section
+  :::u-page-grid
+    ::::u-page-card
+    ---
+    spotlight: true
+    class: col-span-2
+    to: https://jamflow-docs.nuxt.space/en/auth/getting-started
+    ---
+    #title
+    Auth Module
+    
+    #description
+    User authentication and management module for JAMflow applications.
+    
+    ```ts
+    await requireUserPermission(event, {
+      topic: 'products',
+      actions: ['delete'],
+    })
+    ```
+    ::::
+  :::
+::
 
 
 # Auth Module and Service
 
-The Auth Module and Auth Service are services integrated with the JAMflow infrastructure for managing sessions and permissions using a solution inspired by Google Zanzibar.
+The Auth Module and Auth Service are projects integrated with the JAMflow infrastructure for managing sessions and permissions using a solution inspired by Google Zanzibar.
 
-- JWS and JWE based
-- Auto Refresh of the session
-- Designing for a global, distributed, and stateless setup.
+- JWT based
+- Session Auto-Refresh
+- Designed for a global, distributed, and stateless setup.
+
+Once you receive an Auth Service deployment, you can install the Auth Module in your Nuxt applications.
+
+```bash
+npx nypm add @jamflow/auth-module
+```
+
+Then configure it in your `nuxt.config.ts`:
+
+```ts
+export default defineNuxtConfig({
+  modules: [
+    '@jamflow/auth-module'
+  ],
+
+  auth: {
+    issuer: 'https://<YOUR-PROJECT>.auth.jamflow.app',
+    audience: 'https://your-project.com',
+  }
+})
+```
 
 
-# Root page
+# JAMflow Documentazione
 
-Trova la documentazione per i moduli JAMflow in italiano o inglese
+::u-page-hero
+#title
+JAMflow Docs
+
+#description
+La documentazione per i moduli JAMflow in italiano e inglese
+::
+
+::u-page-section
+  :::u-page-grid
+    ::::u-page-card
+    ---
+    spotlight: true
+    class: col-span-2
+    to: https://jamflow-docs.nuxt.space/it/auth/getting-started
+    ---
+    #title
+    Auth Module
+    
+    #description
+    Modulo di autenticazione e gestione degli utenti per le applicazioni JAMflow.
+    
+    ```ts
+    await requireUserPermission(event, {
+      topic: 'products',
+      actions: ['delete'],
+    })
+    ```
+    ::::
+  :::
+::
 
 
 # Auth Module and Service
 
-I Moduli di Auth Module e Auth Service sono servizi integrati con l'infrastruttura JAMflow per la gestione delle sessioni e dei permessi usando una soluzione ispirata da Google Zanzibar.
+I progetti di Auth Module e Auth Service sono servizi integrati con l'infrastruttura JAMflow per la gestione delle sessioni e dei permessi usando una soluzione ispirata da Google Zanzibar.
 
-- basato su JWS e JWE
-- Auto Refresh della sessione
+- basato su JWT
+- Auto-Refresh della sessione
 - Progettato per un'architettura globale, distribuita e stateless.
+
+Una volta che avete accesso a un deployment di Auth Service, potete connettervi ad esso usando l'Auth Module nelle vostre applicazioni Nuxt.
+
+```bash
+npx nypm add @jamflow/auth-module
+```
+
+Poi configuratelo nel vostro `nuxt.config.ts`:
+
+```ts
+export default defineNuxtConfig({
+  modules: [
+    '@jamflow/auth-module'
+  ],
+
+  auth: {
+    issuer: 'https://<YOUR-PROJECT>.auth.jamflow.app',
+    audience: 'https://your-project.com',
+  }
+})
+```
