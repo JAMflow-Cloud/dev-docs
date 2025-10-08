@@ -7,6 +7,36 @@ seo:
   description: Documentation for JAMflow modules
 ---
 
-# Root page
+::u-page-hero
+#title
+JAMflow Docs
 
-Find the documentation for JAMflow modules in Italian or English
+#description
+Find the documentation for JAMflow modules in Italian and English
+::
+
+::u-page-section
+  :::u-page-grid
+    ::::u-page-card
+    ---
+    spotlight: true
+    class: col-span-2
+    to: /en/auth/getting-started
+    ---
+
+    #title
+    Auth Module
+    
+    #description
+    User authentication and management module for JAMflow applications.
+
+
+    ```ts
+    await requireUserPermission(event, {
+      topic: 'products',
+      actions: ['delete'],
+    })
+    ```
+    ::::
+  :::
+::
