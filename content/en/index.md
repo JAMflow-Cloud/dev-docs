@@ -21,7 +21,7 @@ Find the documentation for JAMflow modules in Italian and English
     ---
     spotlight: true
     class: col-span-2
-    to: /en/auth/getting-started
+    to: /en/auth-module/getting-started
     ---
 
     #title
