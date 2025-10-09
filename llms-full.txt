@@ -14,7 +14,7 @@ Find the documentation for JAMflow modules in Italian and English
     ---
     spotlight: true
     class: col-span-2
-    to: https://jamflow-docs.nuxt.space/en/auth/getting-started
+    to: https://jamflow-docs.nuxt.space/en/auth-module/getting-started
     ---
     #title
     Auth Module
@@ -33,34 +33,387 @@ Find the documentation for JAMflow modules in Italian and English
 ::
 
 
-# Auth Module and Service
+# Auth Module: Getting Started
 
-The Auth Module and Auth Service are projects integrated with the JAMflow infrastructure for managing sessions and permissions using a solution inspired by Google Zanzibar.
+Jamflow Auth Module integrates Nuxt applications with the Jamflow Auth Service. It centralizes authentication, team membership, and permission checks without relying on database connection for each validation. Instead, it uses JWT-based ID, access, and refresh tokens issued by the Auth Service and exposes friendly utilities on both client and server.
 
-- JWT based
-- Session Auto-Refresh
-- Designed for a global, distributed, and stateless setup.
+The permissions model is inspired by Google Zanzibar and allows defining fine-grained access control rules based on user roles, team membership, and resource relationships.
+
+## What you get
+
+- Automatic session bootstrap during SSR and SPA hydration
+- Typed Vue composables (`useUserSession`, `usePermissions`) for working with tokens and permissions
+- Nitro utilities for verifying sessions, guarding routes, and performing service-to-service requests
+- Proxy endpoints (`/_auth-api/**`, `/.well-known/jwks.json`) to keep cookies on your domain and avoid CORS headaches
+- Minimal configuration surface that plugs into the Auth Service tenants your company manages
+
+## Quickstart
 
 Once you receive an Auth Service deployment, you can install the Auth Module in your Nuxt applications.
 
-```bash
-npx nypm add @jamflow/auth-module
-```
-
-Then configure it in your `nuxt.config.ts`:
+1. Install the module via your preferred package manager.
+2. Register it in `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
-  modules: [
-    '@jamflow/auth-module'
-  ],
-
+  modules: ['@jamflow/auth-module'],
   auth: {
     issuer: 'https://<YOUR-PROJECT>.auth.jamflow.app',
     audience: 'https://your-project.com',
+  },
+})
+```
+
+3. Ensure the environment allows setting secure cookies for the host that serves your Nuxt app.
+4. Use the provided [Client-side Guide](https://jamflow-docs.nuxt.space/client-guide) and [Server-side Guide](https://jamflow-docs.nuxt.space/server-guide) to wire user flows.
+
+## Token model
+
+The Auth Service issues three cookies:
+
+| Token         | Default cookie    | Purpose                                                     |
+| ------------- | ----------------- | ----------------------------------------------------------- |
+| ID token      | `j_id_token`      | Identifies the logged-in user (name, email, team, etc.).    |
+| Access token  | `j_access_token`  | Carries serialized permission strings for authorization.    |
+| Refresh token | `j_refresh_token` | Allows renewing ID/access tokens without re-authentication. |
+
+The module verifies tokens with the JWKS document exposed by your Auth Service. Verification is done automatically under the hood and caches the key set for one hour.
+
+## Architecture at a glance
+
+::mermaid
+```text
+flowchart LR
+  subgraph Browser
+    A[Vue component]
+  end
+  subgraph NuxtApp[Nuxt Nitro]
+    B[useUserSession]
+    C[usePermissions]
+    D[/requireUserSession, requireUserPermission/]
+    E[Proxy routes]
+  end
+  subgraph AuthService
+    F["/api/auth/*" endpoints]
+    G["/.well-known/jwks.json"]
+  end
+
+  A --> B
+  A --> C
+  B & C --> E --> F
+  D --> E
+  E --> G
+```
+::
+
+- Client composables always talk to `/_auth-api/...`, which proxies to `${issuer}/api/...`.
+- Server utilities do the same and also cache decoded tokens on the `H3Event` context for reuse.
+- JWKS keys are proxied through `/.well-known/jwks.json` to avoid cross-origin requests from the browser.
+
+## Configuration reference
+
+| Option                        | Env Var                              | Description                                                         |
+| ----------------------------- | ------------------------------------ | ------------------------------------------------------------------- |
+| `auth.issuer`                 | `NUXT_PUBLIC_AUTH_ISSUER`            | Base URL of your Auth Service deployment. Required.                 |
+| `auth.audience`               | `NUXT_PUBLIC_AUTH_AUDIENCE`          | Expected audience for access tokens. Required.                      |
+| `auth.jwksUrl`                | `NUXT_PUBLIC_AUTH_JWKS_URL`          | Path to the JWKS document. Defaults to `/.well-known/jwks.json`.    |
+| `auth.idToken.name`           | `NUXT_PUBLIC_AUTH_ID_TOKEN_NAME`     | Cookie name for the ID token. Defaults to `j_id_token`.             |
+| `auth.accessToken.name`       | `NUXT_PUBLIC_AUTH_ACCESS_TOKEN_NAME` | Cookie name for the access token. Defaults to `j_access_token`.     |
+| `auth.refreshToken.name`      | `NUXT_AUTH_REFRESH_TOKEN_NAME`       | Cookie name for the refresh token. Defaults to `j_refresh_token`.   |
+| `auth.refreshToken.expiresIn` | `NUXT_AUTH_REFRESH_TOKEN_EXPIRES_IN` | Expiration (seconds) used when evaluating refresh token longevity.  |
+| `auth.apiToken`               | `NUXT_AUTH_API_TOKEN`                | Machine token for Auth Service API access (used by `createInvite`). |
+
+## Development checklist when using the module
+
+1. Configure runtime values via environment variables in `.env` files or deployment secrets.
+2. Confirm that cookies are issued with the expected `Secure` and `SameSite` attributes for your hosting scenario.
+3. Decide how your UI handles permission failures (redirect vs. empty state).
+
+## Learn more
+
+- [Client-side Guide](https://jamflow-docs.nuxt.space/en/auth-module/client-guide.md) – working with composables, login flows, and permissions in Vue.
+- [Server-side Guide](https://jamflow-docs.nuxt.space/en/auth-module/server-guide.md) – Nitro utilities, permission guards, and service helpers.
+
+
+# Auth Module: Client Guide
+
+This module ships a collection of Vue composables and Nuxt plugins that make it easy to work with Jamflow Auth Service inside Nuxt applications. This document walks through the client-facing primitives, how they interact with the Auth backend, and how to integrate them in your app.
+
+::warning
+**Prerequisites**
+
+- Your Auth Service instance needs to be deployed in your service contract.
+- The module must be registered in `nuxt.config.ts` and configured with at least `issuer` and `audience`.
+- Cookies for ID, access, and refresh tokens are managed automatically by the module; ensure they are not blocked by your deployment setup.
+::
+
+## Session bootstrap
+
+Two Nuxt plugins are in charge of keeping the session fresh across navigation and hydration:
+
+- `session.server`: runs before the server render. It populates the payload with a `isCached` flag and, when the request is freshly rendered, calls `useUserSession().fetch()` to decode the latest ID and access tokens.
+- `session.client`: runs on the client during hydration. If the page was delivered from payload cache or static prerendering, it fetches the session after the app mounts to avoid serving stale data.
+
+You normally do not need to import these plugins manually; they are auto-registered when the module is installed.
+
+## `useUserSession()`
+
+`useUserSession` is the primary composable exposed by the module. It transparently refreshes cookies, talks to the server proxy routes, and exposes reactive state for the logged-in user.
+
+```ts
+const {
+  user,       // Computed<IDTokenClaims | null>
+  access,     // Computed<AccessTokenClaims | null>
+  loggedIn,   // Computed<boolean>
+  login,
+  requestAccess,
+  fetch,
+  refresh,
+  clear,
+} = useUserSession()
+```
+
+### State accessors
+
+- `user`: ID token claims (subject, email, team, etc.). `null` when the visitor is anonymous or the token can't be verified.
+- `access`: Access token claims, including the serialized permission codes that drive `usePermissions`.
+- `loggedIn`: Convenience boolean derived from `user`.
+
+### Actions
+
+- `login(email, password)`: Calls `/_auth-api/auth/login`, sets cookies, fetches access permissions, and resolves when the session is ready.
+- `requestAccess(teamId?)`: Manually request a fresh access token for the current user. This is useful when switching team contexts.
+- `fetch()`: Re-reads cookies, validates tokens against the JWKS endpoint, and updates local state. You rarely call this directly because the plugins do it for you.
+- `refresh()`: Uses the refresh token endpoint to obtain new ID and access tokens.
+- `clear()`: Logs the user out by deleting cookies via `/_auth-api/auth/session` endpoint and resetting in-memory state.
+
+### Working with fetch contexts
+
+The composable automatically switches between `$fetch` on the client and the request-scoped `$fetch` on the server. This is particularly important when building custom plugins or middlewares. It means the same code works in components, server routes, and Nitro handlers without additional wiring.
+
+## Handling permissions with `usePermissions()`
+
+Permissions are encoded in your access token as short codes (for example `@blog:cru` for global create/read/update on the `blog` topic). `usePermissions` translates those strings into a descriptive data structure and gives you helpers to guard UI and pages.
+
+```ts
+const { permissions, hasPermission, pagePermission } = usePermissions()
+```
+
+- `permissions`: A computed object of type `DecryptedPermissions` separating `team` and `global` scopes.
+- `hasPermission(check)`: Return `true` if the current access token grants all requested actions for the given topic. Set `check.team = true` to look at team-scoped grants; otherwise the global scope is used.
+- `pagePermission(check, { redirect? })`: Returns the full `ResourcePermissions` object for the topic. When the user lacks access you can opt-in to a redirect (default `'/'`). Without redirect it resolves to an object with all actions set to `false` so that you can render a warning state.
+
+### Example: guarding a page
+
+```vue
+const { pagePermission } = usePermissions()
+
+<script setup lang="ts">
+const blogPerms = await pagePermission({
+  topic: 'blog-posts',
+  actions: ['read'],
+})
+</script>
+
+<template>
+  <section v-if="blogPerms.read">
+    <!-- Secured content -->
+  </section>
+  <NuxtErrorBoundary v-else>
+    <p>You don't have access to blog posts yet.</p>
+  </NuxtErrorBoundary>
+</template>
+```
+
+### Example: feature flagging UI controls
+
+```vue
+<script setup lang="ts">
+const { hasPermission } = usePermissions()
+
+const canPublish = computed(() => hasPermission({
+  topic: 'blog-posts',
+  actions: ['execute'],
+}))
+</script>
+
+<template>
+  <UButton :disabled="!canPublish">Publish</UButton>
+</template>
+```
+
+## Token lifecycle
+
+- Cookies are refreshed automatically on every call to `fetch()` and `refresh()` via Nuxt's `refreshCookie` helper.
+- When an access token is expired, `useUserSession` transparently requests a fresh one and forwards Set-Cookie headers from the API to the browser.
+- JWKS keys are cached in memory for up to one hour to avoid unnecessary network traffic.
+
+## Troubleshooting
+
+| Symptom                                  | Likely cause                                                               | Fix                                                                                |
+| ---------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `useUserSession().user` is always `null` | Missing or invalid `issuer` / `audience` runtime config                    | Verify `nuxt.config` and environment variables.                                    |
+| Login succeeds but permissions are empty | Access token not requested, or permission codes not configured server-side | Ensure `requestAccess()` runs after login and the Auth Service issues permissions. |
+| Client navigations forget session        | Cookies blocked by domain or secure flag mismatch                          | Check deployment base URL and cookie configuration in the service.                 |
+
+## Next steps
+
+- Review the [Server-side Guide](https://jamflow-docs.nuxt.space/en/auth-module/server-guide.md) for Nitro utilities you can use in API routes.
+- Keep an eye on token expiration in long-lived tabs; consider calling `useUserSession().refresh()` from a silent timer if your UX requires it.
+
+
+# Auth Module: Server Guide
+
+Jamflow Auth Module ships a set of Nitro utilities that simplify validating sessions, checking permissions, and orchestrating service-to-service calls. This guide covers the helpers you can use inside server routes, server plugins, and event handlers.
+
+::warning
+The module is built around JWT validation: it does 
+
+**not**
+
+ implement OAuth or OpenID Connect flows. Instead, your Nuxt app proxies to the Jamflow Auth Service endpoints under 
+
+`/_auth-api/*`
+
+ and handles tokens issued by that service.
+::
+
+## Runtime configuration recap
+
+At runtime the module expects the following properties. They are made available through `useRuntimeConfig(event)`:
+
+- `public.auth.issuer` – Base URL of your Auth Service instance. Used when proxying requests and fetching JWKS keys.
+- `public.auth.audience` – Expected audience for access tokens.
+- `public.auth.jwksUrl` – Path to retrieve the JSON Web Key Set. Defaults to `/.well-known/jwks.json` relative to the issuer.
+- `public.auth.idToken` / `public.auth.accessToken` – Names and verification options for cookies.
+- `auth.refreshToken` – Private configuration holding refresh token cookie settings.
+- `auth.apiToken` – Optional machine-to-machine token used by `createInvite`.
+
+Use the module options in `nuxt.config.ts` or environment variables to populate these values.
+
+## Session utilities
+
+All session helpers live under the user's identity (ID Token).
+
+### `getUserSession(event)`
+
+Returns the decoded `IDTokenClaims` if a valid cookie is present, or `undefined` otherwise. Cached per-request to avoid repeated verification (eg: when also calling a series of middlewares).
+
+### `requireUserSession(event)`
+
+Same as `getUserSession` but raises a Nitro `createError` with status 401 if the visitor is unauthenticated. Use it in protected API routes:
+
+```ts
+import { requireUserSession } from '#auth-module/server/utils/session'
+
+export default defineEventHandler(async (event) => {
+  const session = await requireUserSession(event)
+
+  return {
+    message: `Welcome ${session.name}`,
   }
 })
 ```
+
+### `clearUserSession(event)`
+
+Deletes ID, access, and refresh token cookies and notifies the Auth Service by issuing a `DELETE /_auth-api/auth/session` request. Ideal for implementing logout endpoints or revoking tokens after destructive events.
+
+The session helper automatically refreshes the user session when a refresh token is nearing expiration. It calls `/api/auth/refresh` and caches the renewed tokens in `event.context.authSessions` to keep future lookups synchronous.
+
+## Access utilities
+
+Access helpers focus on the access token – the one carrying permission strings.
+
+### `getUserAccess(event)` / `requireUserAccess(event)`
+
+Both functions verify the access token using the configured JWKS key set. If the cookie is missing or expired, the module attempts to refresh it via `/_auth-api/auth/token`. The `require*` variant throws a 401 when no valid token can be issued.
+
+### `clearUserAccess(event)`
+
+Deletes the access token by hitting `DELETE /_auth-api/auth/token` and removing the associated cookie.
+
+### `requireUserPermission(event, required)`
+
+Checks whether the current user has all actions listed in `required.actions` for the given topic. It returns a rich object when the check passes:
+
+```ts
+const result = await requireUserPermission(event, {
+  topic: 'documents',
+  actions: ['read', 'update'],
+  team: true,          // Force team-scoped permissions
+})
+
+// result => {
+//   accessToken: AccessTokenClaims,
+//   userId: string,
+//   teamId: string | null,
+//   isGlobal: boolean,
+//   selector: string | null,
+// }
+```
+
+When permissions are missing, a 403 `createError` is thrown. This makes it straightforward to plug into Nitro route middleware.
+
+Under the hood the helper relies on the serialized permissions to match the CRUD operations encoded in the access token.
+
+## Proxy routes
+
+The module exposes two server routes that forward requests to the Auth Service while keeping cookies scoped to your Nuxt domain:
+
+| Route                    | Target                            | Use case                                                |
+| ------------------------ | --------------------------------- | ------------------------------------------------------- |
+| `/_auth-api/**`          | `${issuer}/api/**`                | Primary login, refresh, logout, and token endpoints.    |
+| `/.well-known/jwks.json` | `${issuer}/.well-known/jwks.json` | Retrieve signing keys for ID/access token verification. |
+
+Since these are registered as Nitro handlers, you can call them using `$fetch` within your app without dealing with cross-domain cookies.
+
+## Service utilities
+
+### `createInvite(invite | invite[])`
+
+Helps Jamflow services invite new members via the Auth Service. It accepts either a single invite payload or an array. The helper reads `auth.apiToken` and `public.auth.issuer` from runtime config and performs a POST request to `${issuer}/api/invites`. The return type includes the invite record and the freshly generated plaintext invite token.
+
+Example:
+
+```ts
+import { createInvite } from '#auth-module/server/utils/service-utils'
+
+export default defineEventHandler(async (event) => {
+  await requireUserPermission(event, {
+    topic: 'team-members',
+    actions: ['create'],
+    team: true,
+  })
+
+  const result = await createInvite({
+    email: 'alex@example.com',
+    teamId: event.context.params!.teamId,
+    permissions: ['#team-members:cr'],
+  })
+
+  return result
+})
+```
+
+Make sure `auth.apiToken` is configured with a machine token issued by the Auth Service. Otherwise the helper will throw a 500-level error.
+
+## Error handling patterns
+
+- All `require*` functions throw Nitro errors; wrap them in try/catch if you need to customize the response.
+- Token verification logs decoding issues to the server console but fails gracefully by returning `undefined`. Build your handlers assuming that tokens can be absent or invalid.
+- Permission checks differentiate between team-scoped (`#`) and global (`@`) grants. Pass `teamId` or `team: true` to enforce the correct scope.
+
+## Related docs
+
+- [Module Overview](https://jamflow-docs.nuxt.space/en/auth-module/getting-started.md) – configuration reference and quickstart.
+- [Client-side Guide](https://jamflow-docs.nuxt.space/en/auth-module/client-guide.md) – using the composables in Vue components.
+
+
+# Auth Module: FAQ
+
+- Auth Module currently rely on Jamflow Auth Service as the identity provider.
+- not compatible with OAuth or OpenID Connect flows. Auth Module and Auth Service mainly focus on JWT spec at this time.
 
 
 # JAMflow Documentazione
@@ -79,7 +432,7 @@ La documentazione per i moduli JAMflow in italiano e inglese
     ---
     spotlight: true
     class: col-span-2
-    to: https://jamflow-docs.nuxt.space/it/auth/getting-started
+    to: https://jamflow-docs.nuxt.space/it/auth-module/getting-started
     ---
     #title
     Auth Module

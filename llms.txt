@@ -12,7 +12,10 @@
 
 ## DocsEn
 
-- [Auth Module and Service](https://jamflow-docs.nuxt.space/en/auth/getting-started): JAMflow Authentication and Autorization 
+- [Auth Module: Getting Started](https://jamflow-docs.nuxt.space/en/auth-module/getting-started): JAMflow Authentication and Authorization
+- [Auth Module: Client Guide](https://jamflow-docs.nuxt.space/en/auth-module/client-guide): JAMflow Authentication and Authorization
+- [Auth Module: Server Guide](https://jamflow-docs.nuxt.space/en/auth-module/server-guide): JAMflow Authentication and Authorization
+- [Auth Module: FAQ](https://jamflow-docs.nuxt.space/en/auth-module/faq): JAMflow Authentication and Authorization 
 
 ## LandingIt
 
