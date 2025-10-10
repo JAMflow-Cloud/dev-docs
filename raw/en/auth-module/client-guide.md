@@ -1,6 +1,6 @@
-# Auth Module: Client Guide
+# Client Guide
 
-> JAMflow Authentication and Authorization
+> Authentication and Authorization on the client side
 
 This module ships a collection of Vue composables and Nuxt plugins that make it easy to work with Jamflow Auth Service inside Nuxt applications. This document walks through the client-facing primitives, how they interact with the Auth backend, and how to integrate them in your app.
 

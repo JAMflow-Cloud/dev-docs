@@ -13,7 +13,7 @@
 ## DocsEn
 
 - [Auth Module: Getting Started](https://jamflow-docs.nuxt.space/en/auth-module/getting-started): JAMflow Authentication and Authorization
-- [Auth Module: Client Guide](https://jamflow-docs.nuxt.space/en/auth-module/client-guide): JAMflow Authentication and Authorization
+- [Client Guide](https://jamflow-docs.nuxt.space/en/auth-module/client-guide): Authentication and Authorization on the client side
 - [Auth Module: Server Guide](https://jamflow-docs.nuxt.space/en/auth-module/server-guide): JAMflow Authentication and Authorization
 - [Auth Module: FAQ](https://jamflow-docs.nuxt.space/en/auth-module/faq): JAMflow Authentication and Authorization 
 
@@ -23,4 +23,7 @@
 
 ## DocsIt
 
-- [Auth Module and Service](https://jamflow-docs.nuxt.space/it/auth/getting-started): JAMflow Authentication and Autorization 
+- [Auth Module: Getting Started](https://jamflow-docs.nuxt.space/it/auth-module/getting-started): JAMflow Authentication and Authorization
+- [Client Guide](https://jamflow-docs.nuxt.space/it/auth-module/client-guide): Autenticazione e autorizzazione sul lato client
+- [Auth Module: Server Guide](https://jamflow-docs.nuxt.space/it/auth-module/server-guide): JAMflow Authentication and Authorization
+- [Auth Module: FAQ](https://jamflow-docs.nuxt.space/it/auth-module/faq): JAMflow Authentication and Authorization 
