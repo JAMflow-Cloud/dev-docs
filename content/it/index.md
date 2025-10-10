@@ -12,7 +12,8 @@ seo:
 JAMflow Docs
 
 #description
-La documentazione per i moduli JAMflow in italiano e inglese
+Trova la documentazione per i moduli JAMflow e inizia a costruire la tua applicazione oggi stesso!   
+Consultala in Italiano e Inglese.
 ::
 
 ::u-page-section
@@ -26,9 +27,11 @@ La documentazione per i moduli JAMflow in italiano e inglese
 
     #title
     Auth Module
-    
+
+
     #description
-    Modulo di autenticazione e gestione degli utenti per le applicazioni JAMflow.
+    Modulo per l'autenticazione, autorizazione e gestione della sessione utenti in applicazioni JAMflow.
+
 
     ```ts
     await requireUserPermission(event, {
@@ -39,3 +42,4 @@ La documentazione per i moduli JAMflow in italiano e inglese
     ::::
   :::
 ::
+

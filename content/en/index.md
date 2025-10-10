@@ -12,7 +12,8 @@ seo:
 JAMflow Docs
 
 #description
-Find the documentation for JAMflow modules in Italian and English
+Find the documentation for JAMflow modules in Italian and English,   
+and start building your application today!
 ::
 
 ::u-page-section
@@ -28,7 +29,7 @@ Find the documentation for JAMflow modules in Italian and English
     Auth Module
     
     #description
-    User authentication and management module for JAMflow applications.
+    User authentication, authorization and management module for JAMflow applications.
 
 
     ```ts
