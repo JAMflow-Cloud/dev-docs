@@ -1,1 +1,0 @@
-import{v as l,c,p as n,g as p,r as u,aX as i,aZ as s}from"#entry";const m={base:"list-disc ps-6 my-5 marker:text-(--ui-border-accented)"},_={__name:"ProseUl",props:{class:{type:null,required:!1}},setup(e){const a=e,t=l(),o=c(()=>s({extend:s(m),...t.ui?.prose?.ul||{}}));return(r,d)=>(p(),n("ul",{class:i(o.value({class:a.class}))},[u(r.$slots,"default")],2))}};export{_ as default};

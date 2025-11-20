@@ -1,0 +1,1 @@
+import{v as c,c as l,p as n,g as p,r as u,aY as d,a_ as e}from"./Dv6SHnhn.js";const m={base:"bg-muted"},_={__name:"ProseThead",props:{class:{type:null,required:!1}},setup(s){const a=s,t=c(),o=l(()=>e({extend:e(m),...t.ui?.prose?.thead||{}}));return(r,i)=>(p(),n("thead",{class:d(o.value({class:a.class}))},[u(r.$slots,"default")],2))}};export{_ as default};
